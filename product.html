@@ -5,98 +5,11 @@
   <title>Деталі товару</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="styles-product.css">
-  <style>
-    .product-detail {
-      display: flex;
-      gap: 2rem;
-      padding: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
 
-header {
-    background-color: #2c3e50;
-   
-}
-    
-footer {
-    background-color: #2c3e50;
-
-}
-
-    .product-image {
-      flex: 1;
-    }
-    
-    .product-image img {
-      width: 100%;
-      max-width: 500px;
-      border-radius: 8px;
-    }
-    
-    .product-info {
-      flex: 1;
-      padding: 1rem;
-    }
-    
-    .product-info h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    
-    .price {
-      font-size: 1.5rem;
-      color: #2c3e50;
-      font-weight: bold;
-      margin-bottom: 1rem;
-    }
-    
-    .category {
-      font-size: 1rem;
-      color: #7f8c8d;
-      margin-bottom: 1rem;
-    }
-    
-    .description {
-      margin: 2rem 0;
-      line-height: 1.6;
-    }
-    
-    #add-to-cart-btn {
-      padding: 1rem 2rem;
-      background-color: #2c3e50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    
-    #add-to-cart-btn:hover {
-      background-color: #1a252f;
-    }
-    
-    @media (max-width: 768px) {
-      .product-detail {
-        flex-direction: column;
-      }
-    }
-    
-    .edit-description-btn {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
-  </style>
 </head>
 <body>
   <header>
-    <h1>SwyzeShock</h1>
+    <h1> SwyzeShock</h1>
     <nav>
       <a href="index.html">Головна</a>
       <a href="cart.html">Корзина (<span id="cart-count">0</span>)</a>
@@ -111,14 +24,12 @@ footer {
       <h2 id="product-name"></h2>
       <p class="price" id="product-price"></p>
       <p class="category" id="product-category"></p>
-      <div class="description" id="product-description"></div>
       <button id="add-to-cart-btn">Додати до кошика</button>
-      <button id="edit-description-btn" class="edit-description-btn" style="display: none;">Редагувати опис</button>
     </div>
   </main>
 
   <footer>
-    <p>SwyzeShock@gmail.com | +38 (093) 123-45-67</p>
+    <p> shoes@store.com |  +38 (093) 123-45-67</p>
     <p>&copy; 2025 SwyzeShock</p>
   </footer>
 
@@ -127,16 +38,7 @@ footer {
       const urlParams = new URLSearchParams(window.location.search);
       const productId = urlParams.get('id');
       
-      // Отримуємо поточного користувача
-      const currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-      const isAdmin = currentUser?.role === 'admin';
-      
-      // Показуємо кнопку редагування для адміністратора
-      if (isAdmin) {
-        document.getElementById('edit-description-btn').style.display = 'block';
-      }
-      
-      // Отримуємо продукт з localStorage або перенаправляємо, якщо не знайдено
+      // Get product from localStorage or redirect if not found
       const products = JSON.parse(localStorage.getItem('products'));
       const product = products.find(p => p.id == productId);
       
@@ -145,25 +47,14 @@ footer {
         return;
       }
       
-      // Відображаємо продукт
+      // Display product
       document.getElementById('product-img').src = product.image;
       document.getElementById('product-name').textContent = product.name;
       document.getElementById('product-price').textContent = `${product.price} грн`;
       document.getElementById('product-category').textContent = product.category;
-      document.getElementById('product-description').textContent = product.description || 'Опис відсутній';
       document.title = product.name;
       
-      // Додаємо обробник для кнопки редагування опису
-      document.getElementById('edit-description-btn')?.addEventListener('click', () => {
-        const newDescription = prompt('Введіть новий опис товару:', product.description || '');
-        if (newDescription !== null) {
-          product.description = newDescription;
-          document.getElementById('product-description').textContent = newDescription;
-          localStorage.setItem('products', JSON.stringify(products));
-        }
-      });
-      
-      // Додаємо до кошика
+      // Add to cart button
       document.getElementById('add-to-cart-btn').addEventListener('click', () => {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         const existingItem = cart.find(item => item.id == product.id);
