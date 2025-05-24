@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Історія покупок — SwyzeShock</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 0.2rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #3498db;
+    }
+
+    main {
+      padding: 2rem;
+      min-height: calc(100vh - 200px);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 2rem;
+    }
+
+    .order {
+      background-color: #34495e;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      color: white;
+    }
+
+    .order h3 {
+      margin-top: 0;
+    }
+
+    .item {
+      margin-left: 20px;
+      padding: 5px 0;
+    }
+
+    .back-btn {
+      display: block;
+      text-align: center;
+      margin: 30px auto 0;
+      text-decoration: none;
+      background-color: #1abc9c;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      width: fit-content;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .back-btn:hover {
+      background-color: #16a085;
+    }
+
+    footer {
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    footer p {
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SwyzeShock</h1>
+    <nav>
+      <a href="index.html">На головну</a>
+      <a href="login.html">Увійти</a>
+      <a href="cart.html">Корзина (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Історія ваших покупок</h2>
+    <div id="historyContainer"></div>
+    <a href="index.html" class="back-btn">На головну</a>
+  </main>
+
+  <footer>
+    <p>SwyzeShock@gmail.com | +38 (093) 123-45-67</p>
+    <p>&copy; 2025 SwyzeShock</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const history = JSON.parse(localStorage.getItem("purchaseHistory")) || [];
+      const container = document.getElementById("historyContainer");
+
+      if (history.length === 0) {
+        container.innerHTML = "<p>У вас поки немає покупок.</p>";
+        return;
+      }
+
+      history.reverse().forEach(order => {
+        const div = document.createElement("div");
+        div.className = "order";
+
+        div.innerHTML = `
+          <h3>Замовлення від ${order.date}</h3>
+          <p><strong>Покупець:</strong> ${order.customer}</p>
+          <p><strong>Email:</strong> ${order.email}</p>
+          <p><strong>Телефон:</strong> ${order.phone}</p>
+          <p><strong>Доставка:</strong> ${order.deliveryType}, ${order.deliveryAddress}</p>
+          <p><strong>Сума:</strong> ${order.total} грн</p>
+          <p><strong>Товари:</strong></p>
+        `;
+
+        order.items.forEach(item => {
+          const itemEl = document.createElement("div");
+          itemEl.className = "item";
+          itemEl.textContent = `${item.name} — ${item.price} грн × ${item.quantity}`;
+          div.appendChild(itemEl);
+        });
+
+        container.appendChild(div);
+      });
+    });
+  </script>
+
+</body>
+</html>

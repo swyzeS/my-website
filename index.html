@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <title>SwyzeShock</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .banner-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .banner-image {
+      max-width: 80%;
+      max-height: 70vh;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    
+    .banner-image:hover {
+      transform: scale(0.95);
+    }
+    
+    .close-banner-btn {
+      margin-top: 30px;
+      padding: 10px 25px;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .close-banner-btn:hover {
+      background-color: #1a252f;
+    }
+    
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+    
+    nav a:hover {
+      color: #3498db;
+    }
+    
+    main {
+      padding: 2rem;
+      min-height: calc(100vh - 150px);
+    }
+    
+    .filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .filters select {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      background-color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    
+    .product {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    
+    .product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .product img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .product h3 {
+      padding: 0.8rem 1rem 0;
+      font-size: 1.1rem;
+    }
+    
+    .product p {
+      padding: 0.5rem 1rem;
+      color: #3498db;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    
+    .product .view-btn {
+      display: inline-block;
+      margin: 0 1rem 1rem;
+      color: #3498db;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .product button {
+      display: block;
+      width: calc(100% - 2rem);
+      margin: 0 1rem 1rem;
+      padding: 0.6rem;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .product button:hover {
+      background-color: #1a252f;
+    }
+    
+    footer {
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    footer p {
+      margin-bottom: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+      }
+      
+      nav {
+        margin-top: 1rem;
+      }
+      
+      nav a {
+        margin: 0 0.5rem;
+      }
+      
+      .filters {
+        flex-direction: column;
+      }
+      
+      .banner-image {
+        max-width: 95%;
+      }
+    }
+
+    .admin-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+    }
+
+    .admin-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .edit-btn {
+      background-color: #3498db;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+    }
+
+    .add-product-btn {
+      margin-bottom: 2rem;
+      padding: 0.8rem 1.5rem;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .add-product-btn:hover {
+      background-color: #27ae60;
+    }
+
+    #banner {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="banner" class="banner-overlay">
+    <img src="images/baner.png" alt="Welcome Banner" class="banner-image">
+    <button class="close-banner-btn" id="closeBannerBtn">До головної</button>
+  </div>
+
+  <header>
+    <h1>SwyzeShock</h1>
+    <nav>
+      <a href="ProNas.html">Про нас</a>
+      <a href="login.html">Увійти</a>
+      <a href="cart.html">Корзина (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+
+  <main>
+    <div id="adminControls" style="display: none;">
+      <button class="add-product-btn" id="addProductBtn">Додати товар</button>
+    </div>
+
+    <section class="filters">
+      <select id="categoryFilter">
+        <option value="all">Усі категорії</option>
+        <option value="Чоловіче">Чоловіче</option>
+        <option value="Жіноче">Жіноче</option>
+        <option value="Унісекс">Унісекс</option>
+      </select>
+
+      <select id="sortOrder">
+        <option value="default">Сортувати</option>
+        <option value="priceAsc">Ціна ↑</option>
+        <option value="priceDesc">Ціна ↓</option>
+      </select>
+    </section>
+
+    <section id="productList" class="product-list"></section>
+  </main>
+
+  <footer>
+    <p>SwyzeShock@gmail.com | +38 (093) 123-45-67</p>
+    <p>&copy; 2025 SwyzeShock</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const banner = document.getElementById('banner');
+      const closeBannerBtn = document.getElementById('closeBannerBtn');
+
+      const isBannerClosed = localStorage.getItem('bannerClosed') === 'true';
+
+      if (!isBannerClosed) {
+        banner.style.display = 'flex';
+      }
+
+      closeBannerBtn.addEventListener('click', function () {
+        banner.style.display = 'none';
+        localStorage.setItem('bannerClosed', 'true');
+      });
+    });
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>

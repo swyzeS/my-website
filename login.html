@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>SwyzeShock - Вхід/Реєстрація</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="login-styles.css">
+</head>
+<body>
+  <header>
+    <h1>SwyzeShock</h1>
+    <nav>
+      <a href="index.html">Головна</a>
+      <a href="cart.html">Корзина</a>
+    </nav>
+  </header>
+
+  <main class="auth-container">
+    <!-- Форма реєстрації -->
+    <div id="registerSection">
+      <h2>Реєстрація</h2>
+      <form id="registerForm">
+        <input type="text" id="regName" placeholder="Ім'я" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <input type="password" id="regPassword" placeholder="Пароль" required>
+        <button type="submit">Зареєструватись</button>
+      </form>
+      
+      <div class="switch-form">
+        Вже є акаунт? <a id="showLogin">Увійти</a>
+      </div>
+    </div>
+    
+    <!-- Форма входу -->
+    <div id="loginSection" class="hidden">
+      <h2>Вхід</h2>
+      <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Пароль" required>
+        <button type="submit">Увійти</button>
+      </form>
+      <button id="adminLoginBtn" class="admin-login-btn">Увійти як адміністратор</button>
+      
+      <div class="switch-form">
+        Немає акаунта? <a id="showRegister">Зареєструватись</a>
+      </div>
+    </div>
+    
+    <!-- Форма входу адміністратора -->
+    <div id="adminLoginSection" class="hidden">
+      <h2>Вхід для адміністратора</h2>
+      <form id="adminLoginForm">
+        <input type="password" id="adminPassword" placeholder="Адмін пароль" required>
+        <button type="submit">Увійти</button>
+      </form>
+      <button id="backToLoginBtn" class="back-btn">Назад до звичайного входу</button>
+    </div>
+    
+    <!-- Інформація про користувача -->
+    <div id="userSection" class="hidden">
+      <div class="user-info">
+        <i class="fas fa-user-circle user-icon"></i>
+        <h3 id="userName"></h3>
+        <p id="userRole"></p>
+        <p id="userEmail"></p>
+      </div>
+      
+      <button class="logout-btn" id="logoutBtn">Вийти</button>
+      
+   
+    </div>
+  </main>
+
+  <footer>
+    <p>SwyzeShock@gmail.com | +38 (093) 123-45-67</p>
+    <p>&copy; 2025 SwyzeShock</p>
+  </footer>
+
+   <script>
+    // Поточний користувач (зберігається в localStorage)
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+    const ADMIN_PASSWORD = "12345";
+
+    // DOM елементи
+    const registerSection = document.getElementById('registerSection');
+    const loginSection = document.getElementById('loginSection');
+    const adminLoginSection = document.getElementById('adminLoginSection');
+    const userSection = document.getElementById('userSection');
+    const showLogin = document.getElementById('showLogin');
+    const showRegister = document.getElementById('showRegister');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const adminPanel = document.getElementById('adminPanel');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const backToLoginBtn = document.getElementById('backToLoginBtn');
+
+    // Перемикання між формами
+    showLogin.addEventListener('click', () => {
+      registerSection.classList.add('hidden');
+      loginSection.classList.remove('hidden');
+      adminLoginSection.classList.add('hidden');
+    });
+
+    showRegister.addEventListener('click', () => {
+      loginSection.classList.add('hidden');
+      adminLoginSection.classList.add('hidden');
+      registerSection.classList.remove('hidden');
+    });
+
+    adminLoginBtn.addEventListener('click', () => {
+      loginSection.classList.add('hidden');
+      registerSection.classList.add('hidden');
+      adminLoginSection.classList.remove('hidden');
+    });
+
+    backToLoginBtn.addEventListener('click', () => {
+      adminLoginSection.classList.add('hidden');
+      registerSection.classList.add('hidden');
+      loginSection.classList.remove('hidden');
+    });
+
+    // Реєстрація
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      currentUser = {
+        name: document.getElementById('regName').value,
+        email: document.getElementById('regEmail').value,
+        role: 'user',
+        registered: true
+      };
+      
+      // Зберігаємо користувача в localStorage
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      showUserInfo();
+    });
+
+    // Вхід
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      currentUser = {
+        name: "Користувач",
+        email: document.getElementById('loginEmail').value,
+        role: 'user',
+        registered: false
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      showUserInfo();
+    });
+
+    // Вхід адміністратора
+    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const password = document.getElementById('adminPassword').value;
+      
+      if (password === ADMIN_PASSWORD) {
+        currentUser = {
+          name: "Адміністратор",
+          email: "admin@shoestore.com",
+          role: 'admin',
+          registered: true
+        };
+        
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        showUserInfo();
+      } else {
+        alert("Невірний пароль адміністратора!");
+      }
+    });
+
+    // Вихід
+    logoutBtn.addEventListener('click', function() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      registerSection.classList.remove('hidden');
+      loginSection.classList.add('hidden');
+      adminLoginSection.classList.add('hidden');
+      userSection.classList.add('hidden');
+      
+      const adminLink = document.getElementById('adminLink');
+      if(adminLink) {
+        document.querySelector('header nav').removeChild(adminLink);
+      }
+    });
+
+    // Показати інформацію про користувача
+    function showUserInfo() {
+      registerSection.classList.add('hidden');
+      loginSection.classList.add('hidden');
+      adminLoginSection.classList.add('hidden');
+      userSection.classList.remove('hidden');
+      
+      document.getElementById('userName').textContent = currentUser.name;
+      document.getElementById('userEmail').textContent = currentUser.email;
+      
+      if(currentUser.role === 'admin') {
+        document.getElementById('userRole').textContent = 'Адміністратор';
+        adminPanel.classList.remove('hidden');
+      } else {
+        document.getElementById('userRole').textContent = 'Користувач';
+        adminPanel.classList.add('hidden');
+      }
+      
+      updateHeader();
+    }
+
+    
+
+    // Ініціалізація при завантаженні
+    document.addEventListener('DOMContentLoaded', () => {
+      if (currentUser) {
+        // Якщо користувач вже авторизований, показуємо його інформацію
+        showUserInfo();
+      } else {
+        // Інакше показуємо форму реєстрації
+        registerSection.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
+</body>
+</html>

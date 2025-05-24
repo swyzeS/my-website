@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>Кошик</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+
+    
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #ffffff;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+     
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #3498db;
+    }
+
+    main {
+      flex: 1 0 auto;
+      width: 90%;
+      max-width: 900px;
+      margin: 30px auto;
+      background: #2c3e50;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+      gap: 15px;
+    }
+
+    .cart-item img {
+      width: 80px;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cart-controls button,
+    .cart-item button:last-child {
+      padding: 6px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #2c3e50;
+      background: white;
+      color: #2c3e50;
+      transition: all 0.3s ease;
+    }
+
+    .cart-controls button:hover,
+    .cart-item button:last-child:hover {
+      background-color: #2c3e50;
+      color: white;
+    }
+
+    .cart-item button:last-child {
+      background-color: #e74c3c;
+      border: none;
+      color: white;
+    }
+
+    .cart-item button:last-child:hover {
+      background-color: #c0392b;
+    }
+
+    .total {
+      font-size: 22px;
+      font-weight: 700;
+      text-align: right;
+      margin: 30px 0 15px 0;
+    }
+
+    .payment-buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 40px;
+    }
+
+    .payment-buttons button {
+      background-color: #1abc9c;
+      border: none;
+      color: white;
+      padding: 12px 28px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+      font-weight: 600;
+    }
+
+    .payment-buttons button:hover {
+      background-color: #16a085;
+    }
+
+    footer {
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    footer p {
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SwyzeShock</h1>
+    <nav>
+      <a href="index.html">На Головну</a>
+      <a href="login.html">Увійти</a>
+      <a href="history.html">Історія покупок </a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Ваш кошик</h1>
+    <div id="cartItems"></div>
+    <div class="total">Загальна сума: <span id="totalPrice">0 грн</span></div>
+    <div class="payment-buttons">
+      <button id="payNowBtn">Сплатити зараз</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>Контакти: info@SwyzeShock.com | +38 (097) 123-45-67</p>
+    <p>&copy; 2025 SwyzeShock</p>
+  </footer>
+
+  <script>
+    const products = [
+      { id: 1, name: "Nike Air Max", price: 3000, image: "images/shoe.jpg" },
+      { id: 2, name: "Adidas Superstar", price: 2800, image: "images/shoe.jpg" },
+      { id: 3, name: "Puma Classic", price: 2500, image: "images/shoe.jpg" },
+      { id: 4, name: "Reebok Runner", price: 2200, image: "images/shoe.jpg" },
+      { id: 5, name: "New Balance 574", price: 2700, image: "images/shoe.jpg" }
+    ];
+
+    function getCart() {
+      const raw = JSON.parse(localStorage.getItem("cart")) || [];
+      const cart = {};
+      raw.forEach(id => {
+        cart[id] = (cart[id] || 0) + 1;
+      });
+      return cart;
+    }
+
+    function saveCart(cart) {
+      const arrayCart = [];
+      for (const id in cart) {
+        for (let i = 0; i < cart[id]; i++) {
+          arrayCart.push(Number(id));
+        }
+      }
+      localStorage.setItem("cart", JSON.stringify(arrayCart));
+    }
+
+    function renderCart() {
+      const cartContainer = document.getElementById("cartItems");
+      cartContainer.innerHTML = "";
+      const cart = getCart();
+      let total = 0;
+
+      Object.keys(cart).forEach(id => {
+        const product = products.find(p => p.id == id);
+        if (!product) return;
+        const quantity = cart[id];
+        const subtotal = quantity * product.price;
+        total += subtotal;
+
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <div><strong>${product.name}</strong><br>${product.price} грн</div>
+          <div class="cart-controls">
+            <button onclick="updateQuantity(${id}, -1)">-</button>
+            <span>${quantity}</span>
+            <button onclick="updateQuantity(${id}, 1)">+</button>
+          </div>
+          <div>${subtotal} грн</div>
+          <button onclick="removeItem(${id})">Видалити</button>
+        `;
+        cartContainer.appendChild(div);
+      });
+
+      document.getElementById("totalPrice").textContent = total + " грн";
+    }
+
+    function updateQuantity(id, change) {
+      const cart = getCart();
+      cart[id] = (cart[id] || 0) + change;
+      if (cart[id] <= 0) {
+        delete cart[id];
+      }
+      saveCart(cart);
+      renderCart();
+    }
+
+    function removeItem(id) {
+      const cart = getCart();
+      delete cart[id];
+      saveCart(cart);
+      renderCart();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCart();
+
+      document.getElementById("payNowBtn").addEventListener("click", () => {
+        const totalText = document.getElementById("totalPrice").textContent;
+        const total = totalText.replace(" грн", "").trim();
+        localStorage.setItem("totalPrice", total);
+        localStorage.setItem("products", JSON.stringify(products));
+        window.location.href = "oplata.html";
+      });
+    });
+  </script>
+
+</body>
+</html>
